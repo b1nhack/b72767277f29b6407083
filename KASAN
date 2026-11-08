@@ -1,0 +1,110 @@
+[   75.439127] ==================================================================
+[   75.439296] BUG: KASAN: slab-out-of-bounds in filemap_map_pages+0x133e/0x1880
+[   75.439391] Read of size 8 at addr ffff88800dc8ca40 by task main/222
+[   75.439483]
+[   75.439544] CPU: 7 UID: 0 PID: 222 Comm: main Tainted: G            E       7.0.14+ #2 PREEMPT(lazy)
+[   75.439550] Tainted: [E]=UNSIGNED_MODULE
+[   75.439551] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.17.0-16.fc45 06/10/2025
+[   75.439553] Call Trace:
+[   75.439554]  <TASK>
+[   75.439555]  dump_stack_lvl+0x5f/0x90
+[   75.439560]  print_report+0x16e/0x4e4
+[   75.439563]  ? __pfx__raw_spin_lock_irqsave+0x10/0x10
+[   75.439568]  ? lruvec_stat_mod_folio+0x161/0x260
+[   75.439571]  ? kasan_complete_mode_report_info+0x2d/0x230
+[   75.439574]  kasan_report+0x104/0x140
+[   75.439577]  ? filemap_map_pages+0x133e/0x1880
+[   75.439578]  ? filemap_map_pages+0x133e/0x1880
+[   75.439580]  __asan_report_load8_noabort+0x14/0x30
+[   75.439581]  filemap_map_pages+0x133e/0x1880
+[   75.439583]  ? __pfx_filemap_map_pages+0x10/0x10
+[   75.439585]  do_fault+0x81b/0x1280
+[   75.439587]  ? __pte_offset_map+0x20/0x2c0
+[   75.439590]  ? __pfx_pmd_val+0x10/0x10
+[   75.439593]  __handle_mm_fault+0x11f4/0x2140
+[   75.439594]  ? zap_page_range_single_batched+0x27b/0x590
+[   75.439596]  ? copy_folio_from_iter_atomic+0x22a/0x2060
+[   75.439600]  ? __pfx___handle_mm_fault+0x10/0x10
+[   75.439602]  ? __bad_area_nosemaphore+0x29f/0x340
+[   75.439606]  ? __pfx_find_vma+0x10/0x10
+[   75.439608]  handle_mm_fault+0x1fa/0x680
+[   75.439610]  ? lock_mm_and_find_vma+0x43/0xeb0
+[   75.439611]  do_user_addr_fault+0x2d3/0xe80
+[   75.439613]  exc_page_fault+0x95/0x120
+[   75.439616]  asm_exc_page_fault+0x27/0x30
+[   75.439619] RIP: 0010:fault_in_readable+0x8a/0xf0
+[   75.439622] Code: c0 48 ba 00 f0 ff ff ff 7f 00 00 48 85 c0 75 6a 48 39 ca 72 65 0f 01 cb 0f ae e8 48 89 f8 48 85 ff 75 07 eb 5a 48 39 c8 73 13 <8a> 10 48 05 00 10 00 00 88 55 e0 48 25 00 f0 ff ff 75 e8 49 89 c1
+[   75.439624] RSP: 0018:ffff88800f7a78d0 EFLAGS: 00050206
+[   75.439628] RAX: 00007cc9e6c00000 RBX: ffff88800f7a7c60 RCX: 00007cc9e6c00001
+[   75.439629] RDX: 00007ffffffff000 RSI: 1ffff11001ef4f1a RDI: 00007cc9e6c00000
+[   75.439630] RBP: ffff88800f7a7910 R08: 0000000000000001 R09: 0000000000000000
+[   75.439631] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000001
+[   75.439632] R13: 0000000000000000 R14: 00007cc9e6c00000 R15: ffff888011f7ea18
+[   75.439633]  ? __pfx_fault_in_readable+0x10/0x10
+[   75.439635]  ? __kasan_check_write+0x14/0x30
+[   75.439637]  ? shmem_write_end+0x15e/0x360
+[   75.439639]  fault_in_iov_iter_readable+0xe8/0x2a0
+[   75.439642]  generic_perform_write+0x649/0x890
+[   75.439645]  ? __pfx_generic_perform_write+0x10/0x10
+[   75.439647]  ? __kasan_check_read+0x11/0x20
+[   75.439648]  ? file_update_time_flags+0x286/0x4d0
+[   75.439651]  ? tlb_flush_mmu_tlbonly+0xc9/0x470
+[   75.439653]  shmem_file_write_iter+0xe1/0x110
+[   75.439654]  do_iter_readv_writev+0x440/0xc50
+[   75.439657]  ? do_madvise+0x1ed/0x250
+[   75.439659]  ? __pfx_apparmor_file_permission+0x10/0x10
+[   75.439664]  ? __pfx_do_iter_readv_writev+0x10/0x10
+[   75.439665]  ? __import_iovec+0x3c5/0x630
+[   75.439667]  ? security_file_permission+0x77/0x170
+[   75.439670]  ? rw_verify_area+0x77/0x530
+[   75.439672]  vfs_writev+0x28b/0xb10
+[   75.439673]  ? __kasan_check_write+0x14/0x30
+[   75.439675]  ? __pfx_vfs_writev+0x10/0x10
+[   75.439676]  ? __kasan_check_read+0x11/0x20
+[   75.439678]  ? __pfx_do_pwritev+0x10/0x10
+[   75.439680]  ? __kasan_check_read+0x11/0x20
+[   75.439681]  ? __kasan_check_write+0x14/0x30
+[   75.439683]  do_pwritev+0x189/0x310
+[   75.439684]  ? do_pwritev+0x189/0x310
+[   75.439686]  ? __kasan_check_read+0x11/0x20
+[   75.439687]  ? __pfx_do_pwritev+0x10/0x10
+[   75.439689]  ? native_flush_tlb_local+0x30/0x50
+[   75.439691]  ? flush_tlb_func+0x1e8/0x760
+[   75.439693]  __x64_sys_pwritev2+0xcc/0x1b0
+[   75.439695]  ? __flush_smp_call_function_queue+0x17b/0xa90
+[   75.439699]  x64_sys_call+0x20e1/0x2390
+[   75.439702]  do_syscall_64+0x106/0x15e0
+[   75.439704]  ? fpregs_assert_state_consistent+0x5c/0xf0
+[   75.439707]  ? irqentry_exit+0xa2/0x640
+[   75.439709]  ? __irq_exit_rcu+0x45/0x1e0
+[   75.439713]  ? sysvec_call_function+0x54/0xd0
+[   75.439714]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[   75.439715] RIP: 0033:0x408610
+[   75.439718] Code: 0f 1f 84 00 00 00 00 00 66 90 f3 0f 1e fa 55 48 89 f8 4d 89 c2 48 89 f7 4d 89 c8 48 89 d6 48 89 ca 48 89 e5 4c 8b 4d 10 0f 05 <5d> c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 f3 0f 1e fa e9 c7
+[   75.439719] RSP: 002b:00007cc9e704ce50 EFLAGS: 00000213 ORIG_RAX: 0000000000000148
+[   75.439721] RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000408610
+[   75.439722] RDX: 0000000000000001 RSI: 00007cc9e704ce70 RDI: 0000000000000003
+[   75.439723] RBP: 00007cc9e704ce50 R08: 0000000000000000 R09: 0000000000000020
+[   75.439723] R10: 0000000000000000 R11: 0000000000000213 R12: 00007cc9e6c00000
+[   75.439724] R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000000
+[   75.439725]  </TASK>
+[   75.439726]
+[   75.444827] Allocated by task 154:
+[   75.444942]
+[   75.444975] The buggy address belongs to the object at ffff88800dc8c9d8
+[   75.444975]  which belongs to the cache lsm_inode_cache of size 104
+[   75.445128] The buggy address is located 0 bytes to the right of
+[   75.445128]  allocated 104-byte region [ffff88800dc8c9d8, ffff88800dc8ca40)
+[   75.445295]
+[   75.445330] The buggy address belongs to the physical page:
+[   75.445412]
+[   75.445463] Memory state around the buggy address:
+[   75.445545]  ffff88800dc8c900: fc fc fc fc fc fc 00 00 00 00 00 00 00 00 00 00
+[   75.445647]  ffff88800dc8c980: 00 00 00 fc fc fc fc fc fc fc fc 00 00 00 00 00
+[   75.445741] >ffff88800dc8ca00: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
+[   75.445832]                                            ^
+[   75.445897]  ffff88800dc8ca80: 00 00 00 00 00 00 00 00 00 00 00 00 00 fc fc fc
+[   75.445990]  ffff88800dc8cb00: fc fc fc fc fc 00 00 00 00 00 00 00 00 00 00 00
+[   75.446082] ==================================================================
+[   75.446306] BUG: Bad page cache in process main  pfn:21440
+[   75.446962] BUG: Bad page cache in process main  pfn:21480
